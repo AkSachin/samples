@@ -101,7 +101,11 @@ const hdConstraints = {
 };
 
 const fullHdConstraints = {
-  video: {width: {exact: 1920}, height: {exact: 1080}}
+  video: {
+    width: { ideal: 1920 },
+    height: { ideal: 1080 },
+    frameRate: { ideal: 60 }
+  }
 };
 
 const televisionFourKConstraints = {
@@ -126,7 +130,7 @@ function gotDevices(deviceInfos) {
     const option = document.createElement('option');
     option.value = deviceInfo.deviceId;
     if (deviceInfo.kind === 'videoinput') {
-      option.text = deviceInfo.label || camera ${videoSelect.length + 1};
+      option.text = deviceInfo.label || `camera ${videoSelect.length + 1}`;
       videoSelect.appendChild(option);
     }
   }
@@ -243,4 +247,4 @@ function getMedia(constraints) {
       .catch(e => {
         errorMessage('getUserMedia', e.message, e.name);
       });
-} 
+}
