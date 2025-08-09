@@ -1,3 +1,11 @@
+/*
+ *  Copyright (c) 2015 The WebRTC project authors. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree.
+ */
+
 'use strict';
 
 const dimensions = document.querySelector('#dimensions');
@@ -28,21 +36,41 @@ const videoSelect = document.querySelector('select#videoSource');
 let currentWidth = 0;
 let currentHeight = 0;
 
-// Ensure video element plays nicely and we'll flip it horizontally
-video.autoplay = true;
-video.playsInline = true;
-video.style.transform = 'scaleX(-1)'; // flip horizontally by default
+p180Button.onclick = () => {
+  getMedia(p180Constraints);
+};
 
-// --------- BUTTON HANDLERS (keeps original behavior) ----------
-p180Button.onclick = () => { getMedia(p180Constraints); };
-qvgaButton.onclick = () => { getMedia(qvgaConstraints); };
-p360Button.onclick = () => { getMedia(p360Constraints); };
-vgaButton.onclick = () => { getMedia(vgaConstraints); };
-hdButton.onclick = () => { getMedia(hdConstraints); };
-fullHdButton.onclick = () => { getMedia(fullHdConstraints); };
-televisionFourKButton.onclick = () => { getMedia(televisionFourKConstraints); };
-cinemaFourKButton.onclick = () => { getMedia(cinemaFourKConstraints); };
-eightKButton.onclick = () => { getMedia(eightKConstraints); };
+qvgaButton.onclick = () => {
+  getMedia(qvgaConstraints);
+};
+
+p360Button.onclick = () => {
+  getMedia(p360Constraints);
+};
+
+vgaButton.onclick = () => {
+  getMedia(vgaConstraints);
+};
+
+hdButton.onclick = () => {
+  getMedia(hdConstraints);
+};
+
+fullHdButton.onclick = () => {
+  getMedia(fullHdConstraints);
+};
+
+televisionFourKButton.onclick = () => {
+  getMedia(televisionFourKConstraints);
+};
+
+cinemaFourKButton.onclick = () => {
+  getMedia(cinemaFourKConstraints);
+};
+
+eightKButton.onclick = () => {
+  getMedia(eightKConstraints);
+};
 
 pauseVideo.onchange = () => {
   if (pauseVideo.checked) {
@@ -52,50 +80,42 @@ pauseVideo.onchange = () => {
   }
 };
 
-// --------- CONSTRAINTS ----------
-// Default constraints objects (unchanged except default fullHd has frameRate)
 const p180Constraints = {
-  video: { width: { exact: 320 }, height: { exact: 180 } }
+  video: {width: {exact: 320}, height: {exact: 180}}
 };
 
 const qvgaConstraints = {
-  video: { width: { exact: 320 }, height: { exact: 240 } }
+  video: {width: {exact: 320}, height: {exact: 240}}
 };
 
 const p360Constraints = {
-  video: { width: { exact: 640 }, height: { exact: 360 } }
+  video: {width: {exact: 640}, height: {exact: 360}}
 };
 
 const vgaConstraints = {
-  video: { width: { exact: 640 }, height: { exact: 480 } }
+  video: {width: {exact: 640}, height: {exact: 480}}
 };
 
 const hdConstraints = {
-  video: { width: { exact: 1280 }, height: { exact: 720 } }
+  video: {width: {exact: 1280}, height: {exact: 720}}
 };
 
-// IMPORTANT: Default Full HD constraint set to EXACT 1920x1080 @ 60fps
 const fullHdConstraints = {
-  video: {
-    width: { exact: 1920 },
-    height: { exact: 1080 },
-    frameRate: { exact: 60 }
-  }
+  video: {width: {exact: 1920}, height: {exact: 1080}}
 };
 
 const televisionFourKConstraints = {
-  video: { width: { exact: 3840 }, height: { exact: 2160 } }
+  video: {width: {exact: 3840}, height: {exact: 2160}}
 };
 
 const cinemaFourKConstraints = {
-  video: { width: { exact: 4096 }, height: { exact: 2160 } }
+  video: {width: {exact: 4096}, height: {exact: 2160}}
 };
 
 const eightKConstraints = {
-  video: { width: { exact: 7680 }, height: { exact: 4320 } }
+  video: {width: {exact: 7680}, height: {exact: 4320}}
 };
 
-// --------- DEVICE ENUM & STREAM HANDLING ----------
 function gotDevices(deviceInfos) {
   // Handles being called several times to update labels. Preserve values.
   while (videoSelect.firstChild) {
@@ -103,17 +123,17 @@ function gotDevices(deviceInfos) {
   }
   for (let i = 0; i !== deviceInfos.length; ++i) {
     const deviceInfo = deviceInfos[i];
+    const option = document.createElement('option');
+    option.value = deviceInfo.deviceId;
     if (deviceInfo.kind === 'videoinput') {
-      const option = document.createElement('option');
-      option.value = deviceInfo.deviceId;
-      option.text = deviceInfo.label || `camera ${videoSelect.length + 1}`;
+      option.text = deviceInfo.label || camera ${videoSelect.length + 1};
       videoSelect.appendChild(option);
     }
   }
 }
 
 function handleError(error) {
-  console.log('navigator.MediaDevices.getUserMedia error: ', error && error.message, error && error.name);
+  console.log('navigator.MediaDevices.getUserMedia error: ', error.message, error.name);
 }
 
 navigator.mediaDevices.enumerateDevices().then(gotDevices).catch(handleError);
@@ -123,17 +143,15 @@ function gotStream(mediaStream) {
   video.srcObject = mediaStream;
   messagebox.style.display = 'none';
   videoblock.style.display = 'block';
-
-  // Ensure flipped preview is applied even if styles changed elsewhere
-  video.style.transform = 'scaleX(-1)';
-
   const track = mediaStream.getVideoTracks()[0];
   const constraints = track.getConstraints();
   console.log('Result constraints: ' + JSON.stringify(constraints));
-  if (constraints && constraints.width && (constraints.width.exact || constraints.width.min)) {
-    const val = constraints.width.exact || constraints.width.min;
-    widthInput.value = val;
-    widthOutput.textContent = val;
+  if (constraints && constraints.width && constraints.width.exact) {
+    widthInput.value = constraints.width.exact;
+    widthOutput.textContent = constraints.width.exact;
+  } else if (constraints && constraints.width && constraints.width.min) {
+    widthInput.value = constraints.width.min;
+    widthOutput.textContent = constraints.width.min;
   }
 }
 
@@ -171,29 +189,30 @@ video.onresize = () => {
   displayVideoDimensions('resize');
 };
 
-// --------- width slider change uses applyConstraints as before ----------
 function constraintChange(e) {
   widthOutput.textContent = e.target.value;
   const track = window.stream.getVideoTracks()[0];
   let constraints;
   if (aspectLock.checked) {
     constraints = {
-      width: { exact: e.target.value },
-      aspectRatio: { exact: video.videoWidth / video.videoHeight }
+      width: {exact: e.target.value},
+      aspectRatio: {
+        exact: video.videoWidth / video.videoHeight
+      }
     };
   } else {
-    constraints = { width: { exact: e.target.value } };
+    constraints = {width: {exact: e.target.value}};
   }
   clearErrorMessage();
   console.log('applying ' + JSON.stringify(constraints));
   track.applyConstraints(constraints)
-    .then(() => {
-      console.log('applyConstraint success');
-      displayVideoDimensions('applyConstraints');
-    })
-    .catch(err => {
-      errorMessage('applyConstraints', err.name);
-    });
+      .then(() => {
+        console.log('applyConstraint success');
+        displayVideoDimensions('applyConstraints');
+      })
+      .catch(err => {
+        errorMessage('applyConstraints', err.name);
+      });
 }
 
 widthInput.onchange = constraintChange;
@@ -208,7 +227,6 @@ sizeLock.onchange = () => {
   }
 };
 
-// --------- getMedia enforces deviceId and logs constraints ----------
 function getMedia(constraints) {
   if (stream) {
     stream.getTracks().forEach(track => {
@@ -218,26 +236,11 @@ function getMedia(constraints) {
 
   clearErrorMessage();
   videoblock.style.display = 'none';
-
-  // attach currently selected device (if any)
-  constraints.video.deviceId = { ideal: videoSelect.value || undefined };
-
+  constraints.video.deviceId = {ideal: videoSelect.value};
   console.log('getUserMedia constraints: ' + JSON.stringify(constraints));
   navigator.mediaDevices.getUserMedia(constraints)
-    .then(gotStream)
-    .catch(e => {
-      errorMessage('getUserMedia', e.message || e.name);
-    });
-}
-
-// --------- CALL DEFAULT: request 1080p@60 BY DEFAULT and flipped feed ----------
-window.addEventListener('load', () => {
-  // If the user has no device yet enumerated, ensure we re-enumerate before calling getMedia
-  navigator.mediaDevices.enumerateDevices()
-    .then(gotDevices)
-    .catch(handleError)
-    .finally(() => {
-      // Try to get 1080p@60 as the default on page load
-      getMedia(fullHdConstraints);
-    });
-});
+      .then(gotStream)
+      .catch(e => {
+        errorMessage('getUserMedia', e.message, e.name);
+      });
+} 
