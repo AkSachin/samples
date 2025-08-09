@@ -145,11 +145,17 @@ navigator.mediaDevices.enumerateDevices().then(gotDevices).catch(handleError);
 function gotStream(mediaStream) {
   stream = window.stream = mediaStream; // stream available to console
   video.srcObject = mediaStream;
+
+  // Apply horizontal flip
+  video.style.transform = 'scaleX(-1)';
+
   messagebox.style.display = 'none';
   videoblock.style.display = 'block';
+
   const track = mediaStream.getVideoTracks()[0];
   const constraints = track.getConstraints();
   console.log('Result constraints: ' + JSON.stringify(constraints));
+
   if (constraints && constraints.width && constraints.width.exact) {
     widthInput.value = constraints.width.exact;
     widthOutput.textContent = constraints.width.exact;
@@ -158,6 +164,7 @@ function gotStream(mediaStream) {
     widthOutput.textContent = constraints.width.min;
   }
 }
+
 
 function errorMessage(who, what) {
   const message = who + ': ' + what;
