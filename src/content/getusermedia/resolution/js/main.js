@@ -105,7 +105,7 @@ const fullHdConstraints = {
   video: {
     width: { exact: 1920 },
     height: { exact: 1080 },
-    frameRate: { ideal: 60, min: 60 }, // force 60 fps
+    frameRate: { exact: 60 }, // Force 60fps
     facingMode: "user"
   }
 };
