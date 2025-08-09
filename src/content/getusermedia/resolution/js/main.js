@@ -101,10 +101,12 @@ const hdConstraints = {
 };
 
 const fullHdConstraints = {
+  audio: false,
   video: {
-    width: { ideal: 1920 },
-    height: { ideal: 1080 },
-    frameRate: { ideal: 60 }
+    width: { exact: 1920 },
+    height: { exact: 1080 },
+    frameRate: { exact: 60 }, // Force 60fps
+    facingMode: "user"
   }
 };
 
